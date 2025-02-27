@@ -1,0 +1,30 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_REGION: "us-east-1"  # Change this to your AWS region if needed
+    ECR_REPOSITORY: "awsdevops"  # Change this to your ECR repository name
+
+phases:
+  pre_build:
+    commands:
+      - echo "Logging in to Amazon ECR..."
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 381492039554.dkr.ecr.$AWS_REGION.amazonaws.com
+      - IMAGE_URI="381492039554.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY"
+      - echo "Image URI: $IMAGE_URI"
+
+  build:
+    commands:
+      - echo "Building Docker image..."
+      - docker build -t $IMAGE_URI .
+  
+  post_build:
+    commands:
+      - echo "Pushing Docker image to Amazon ECR..."
+      - docker push $IMAGE_URI
+      - echo "Build completed successfully!"
+
+artifacts:
+  files:
+    - "**/*"
+  name: build-output
