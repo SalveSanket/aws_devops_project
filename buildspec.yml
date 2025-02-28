@@ -3,14 +3,16 @@ version: 0.2
 env:
   variables:
     AWS_REGION: "us-east-1"  # Change this if needed
+    AWS_ACCOUNT_ID: "381492039554"  # Your AWS account ID
     ECR_REPOSITORY: "awsdevops"  # Your ECR repository name
-    IMAGE_URI: "381492039554.dkr.ecr.us-east-1.amazonaws.com/awsdevops"
+    IMAGE_TAG: "latest"  # Tag for your Docker image
+    IMAGE_URI: "381492039554.dkr.ecr.us-east-1.amazonaws.com/awsdevops:latest"
 
 phases:
   pre_build:
     commands:
       - echo "Logging in to Amazon ECR..."
-      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $IMAGE_URI
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 381492039554.dkr.ecr.$AWS_REGION.amazonaws.com
 
   build:
     commands:
