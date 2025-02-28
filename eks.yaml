@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: awsdevops-app
+  labels:
+    app: awsdevops
+spec:
+  replicas: 2  # Number of pods
+  selector:
+    matchLabels:
+      app: awsdevops
+  template:
+    metadata:
+      labels:
+        app: awsdevops
+    spec:
+      containers:
+        - name: awsdevops-container
+          image: 381492039554.dkr.ecr.us-east-1.amazonaws.com/awsdevops:latest  # Replace with your ECR image URI
+          ports:
+            - containerPort: 80  # Exposing the app on port 80
+          imagePullPolicy: Always  # Ensures the latest image is always pulled
+      imagePullSecrets:
+        - name: ecr-secret  # If using private ECR, create a secret for authentication
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: awsdevops-service
+spec:
+  selector:
+    app: awsdevops
+  ports:
+    - protocol: TCP
+      port: 80  # External port
+      targetPort: 80  # Container port
+  type: LoadBalancer  # Exposes the service externally
